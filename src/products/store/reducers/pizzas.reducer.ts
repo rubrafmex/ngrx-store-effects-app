@@ -1,7 +1,27 @@
+// code from src/products/store/reducers/index.ts in ngrx-store-effects-app ‹05-entities*›
+
 import * as fromPizzas from '../actions/pizzas.action';
 import { Pizza } from '../../models/pizza.model';
 
 export interface PizzaState {
+
+  // >>>>>>>>>>>>>>>>>>>> Ruben comments:
+  //
+  // To optimize we use entities instead of arrays,
+  // so we pass from [{ id:1, name:'Pizza1' }, {id:2, name:'Pizza2'}]
+  // to something like:
+  // const pizza: any = {
+  //   1: {
+  //     id: 1,
+  //     name: 'Pizza1',
+  //     toppings: []
+  //   }
+  // }
+  // then we can look up the pizza we need really quickly like:
+  // const id = 1
+  // pizza[id]
+  // >>>>>>>>>>>>>>>>>>>>
+
   entities: { [id: number]: Pizza };
   loaded: boolean;
   loading: boolean;
@@ -27,6 +47,10 @@ export function reducer(
 
     case fromPizzas.LOAD_PIZZAS_SUCCESS: {
       const pizzas = action.payload;
+
+      // >>>>>>>>>>>>>>>>>>>> Ruben comments:
+      // We take an array and we flat the array into just pure objects, so we can look them up faster
+      // >>>>>>>>>>>>>>>>>>>>
 
       const entities = pizzas.reduce(
         (entities: { [id: number]: Pizza }, pizza: Pizza) => {
